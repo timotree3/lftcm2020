@@ -35,8 +35,22 @@ Note: this exists as `tactic.interactive.contradiction`.
 
 -/
 
+meta def make_false (e: expr) (l: list expr) : tactic unit :=
+l.mfirst(λ e', to_expr ``(%%e %%e')) >>= exact
+
+-- meta def close_by_applying (e : expr) (e' : expr) : tactic unit :=
+-- tactic.exact (e e')
+
+-- meta def make_false (e: expr) (l: list expr) : tactic unit :=
+-- l.mfirst (close_by_applying e)
+
 meta def tactic.interactive.contr : tactic unit :=
-admit -- change this
+do
+  ctx ← tactic.local_context,
+  ctx.mfirst (λ e, make_false e ctx)
+
+-- meta def tactic.interactive.contr : tactic unit :=
+-- admit -- change this
 
 example (P Q R : Prop) (hp : P) (hq : Q) (hr : ¬ R) (hnq : ¬ Q) : false :=
 by contr
